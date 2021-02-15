@@ -2,76 +2,66 @@
 % Please edit documentation in R/longevity.R
 \name{longevity}
 \alias{longevity}
-\title{Calculate longevity from a matrix population model}
+\title{A function to calculate measures of longevity.}
 \usage{
-longevity(matU, start = 1L, xmax = 1000, lx_crit = 0.01)
+longevity(matU, startLife = 1, initPop = 100, run = 1000)
 }
 \arguments{
-\item{matU}{The survival component of a matrix population model (i.e. a
-square projection matrix reflecting survival-related transitions; e.g.
-progression, stasis, and retrogression)}
+\item{matU}{A matrix containing only survival-dependent processes (growth,
+stasis, shrinkage).}
 
-\item{start}{The index of the first stage at which the author considers the
-beginning of life. Defaults to 1. Alternately, a numeric vector giving the
-starting population vector (in which case \code{length(start)} must match
-\code{ncol(matU))}. See section \emph{Starting from multiple stages}.}
+\item{startLife}{The first stage at which the author consider the beginning
+of life.}
 
-\item{xmax}{The maximum age to which survivorship will be calculated.
-Defaults to 1000.}
+\item{initPop}{Initial population size.}
 
-\item{lx_crit}{The critical proportion to calculate longevity with respect to
-(a value between 0 and 1). Defaults to 0.01.}
+\item{run}{Number of iterations that the maximum longevity will be
+calculated for.}
 }
 \value{
-Returns longevity, the integer age at which expected survivorship
-  falls below \code{lx_crit}. If survivorship doesn't reach \code{lx_crit} by
-  \code{xmax}, returns \code{NA} and prints a warning message.
+This function applies Markov chain approaches to obtain mean life
+expectancy, and a loop to calculate maximum longevity. Outputs are:
+
+- 'eta': mean life expectancy conditional on entering the life cycle on life
+stage described by 'startLife'.
+
+- 'var_eta': variance in life expectancy conditional on entering the life
+cycle on life stage described by 'startLife'.
+
+- 'Max': maximum longevity observed by iterating a population vector with
+'initPop' individuals in stage 'startLife' up to 'run' times.
 }
 \description{
-Calculate longevity (the age a which survivorship falls to some critical
-proportion) from a matrix population model
+A function to calculate life expectancy and maximum longevity of individuals
+in a matrix population model
 }
-\section{Starting from multiple stages}{
-
-Rather than specifying argument \code{start} as a single stage class from
-which all individuals start life, it may sometimes be desirable to allow for
-multiple starting stage classes. For example, if we want to start our
-calculation of longevity from reproductive maturity (i.e. first
-reproduction), we should account for the possibility that there may be
-multiple stage classes in which an individual could first reproduce.
-
-To specify multiple starting stage classes, specify argument \code{start} as
-the desired starting population vector (\strong{n1}), giving the proportion
-of individuals starting in each stage class (the length of \code{start}
-should match the number of columns in the relevant MPM).
-
-See function \code{\link{mature_distrib}} for calculating the proportion of
-individuals achieving reproductive maturity in each stage class.
+\details{
+This function applies Markov chain approaches to obtain the mean and variance
+in life expectancy, and a loop to calculate maximum longevity.
 }
-
+\note{
+%% ~~further notes~~
+}
 \examples{
-data(mpm1)
 
-longevity(mpm1$matU, start = 2)
-longevity(mpm1$matU, start = 2, lx_crit = 0.05)
+matU <- matrix (c(0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0.1, 0.1), nrow = 4, byrow = TRUE)
 
-# starting from first reproduction
-repstages <- repro_stages(mpm1$matF)
-n1 <- mature_distrib(mpm1$matU, start = 2, repro_stages = repstages)
-longevity(mpm1$matU, start = n1)
+longevity(matU, startLife = 1, initPop = 100, run = 1000)
 
 }
 \references{
 Caswell, H. (2001) Matrix Population Models: Construction,
-  Analysis, and Interpretation. Sinauer Associates; 2nd edition. ISBN:
-  978-0878930968
+Analysis, and Interpretation. Sinauer Associates; 2nd edition. ISBN:
+978-0878930968
 
-  Morris, W. F., and D. F. Doak. (2003) Quantitative Conservation Biology:
-  Theory and Practice of Population Viability Analysis. Sinauer Associates,
-  Sunderland, Massachusetts, USA
+Morris, W. F., and D. F. Doak. 2003. Quantitative Conservation 
+Biology: Theory and Practice of Population Viability Analysis. 
+Sinauer Associates, Sunderland, Massachusetts, USA
 }
 \author{
 Roberto Salguero-Gomez <rob.salguero@zoo.ox.ac.uk>
 
 Hal Caswell <hcaswell@whoi.edu>
 }
+\keyword{~kwd1}
+\keyword{~kwd2}
